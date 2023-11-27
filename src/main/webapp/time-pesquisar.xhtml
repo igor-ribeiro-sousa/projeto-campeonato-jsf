@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+	<title>Time - Pesquisar</title>
+	<style>
+html, body {
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	background-image: linear-gradient(to left bottom, #181818, #19191d, #191a23, #171b28,
+		#141d2e);
+	margin: 0;
+	height: 100%;
+	text-align: center;
+}
+
+.mega-menu-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 25px;
+}
+
+.p-megamenu {
+	border: none;
+	width: 100%;
+}
+
+.p-menuitem {
+	padding: 10px;
+}
+
+.p-submenu {
+	background-color: #2980b9;
+	border-bottom: 1px solid #1f6193;
+}
+
+.card-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 25px;
+}
+
+.card {
+	width: 85rem;
+}
+
+.actions-container {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+}
+</style>
+</h:head>
+
+<h:body>
+	<div class="mega-menu-container">
+		<h:form>
+			<p:megaMenu orientation="horizontal" autoDisplay="false">
+				<p:menuitem value="Tabela" outcome="tabela-campeonato"
+					icon="pi pi-calendar" />
+
+				<p:submenu label="Times" icon="pi pi-fw pi-briefcase">
+					<p:column>
+						<p:submenu label="Ações">
+							<p:menuitem value="Inserir" outcome="time-inserir" />
+							<p:menuitem value="Pesquisar" outcome="time-pesquisar" />
+						</p:submenu>
+					</p:column>
+				</p:submenu>
+
+				<p:menuitem value="Partida" outcome="jogo-inserir"
+					icon="pi pi-calendar" />
+
+			</p:megaMenu>
+		</h:form>
+	</div>
+
+	<div class="card-container">
+		<p:card styleClass="card">
+			<f:facet name="title" style="margin-top: 50px;">Time - Pesquisar</f:facet>
+
+			<h:form id="formulario">
+
+				<p:messages id="messages" showDetail="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+
+				<p:dataTable value="#{timeBean.times}" rows="5" var="item"
+					emptyMessage="Nenhuma jogada!" style="text-align: center;"
+					paginator="false"
+					paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+					currentPageReportTemplate="{startRecord}-{endRecord} de {totalRecords} resultados"
+					rowsPerPageTemplate="5,10">
+
+					<p:column headerText="Id" style="text-align: center;">
+						<h:outputText value="#{item.id}" icon="pi pi-search" />
+					</p:column>
+
+					<p:column headerText="Pontuação" style="text-align: center;">
+						<h:outputText value="#{item.pontuacao}" />
+					</p:column>
+
+					<p:column headerText="Time" style="text-align: center;">
+						<h:outputText value="#{item.nome}" />
+					</p:column>
+
+					<p:column headerText="Vitórias" style="text-align: center;">
+						<h:outputText value="#{item.vitorias}" />
+					</p:column>
+
+					<p:column headerText="Derrotas" style="text-align: center;">
+						<h:outputText value="#{item.derrotas}" />
+					</p:column>
+
+					<p:column headerText="Empate" style="text-align: center;">
+						<h:outputText value="#{item.empate}" />
+					</p:column>
+
+					<p:column headerText="Gols Marcados" style="text-align: center;">
+						<h:outputText value="#{item.golsMarcados}" />
+					</p:column>
+
+					<p:column headerText="Gols Sofridos" style="text-align: center;">
+						<h:outputText value="#{item.golsSofridos}" />
+					</p:column>
+
+					<p:column headerText="Saldo de Gols" style="text-align: center;">
+						<h:outputText value="#{item.saldoGols}" />
+					</p:column>
+
+					<p:column headerText="Data Inclusao" style="text-align: center;">
+						<h:outputText value="#{item.dataInclusao}">
+							<f:convertDateTime pattern="dd/MM/yyyy HH:mm"
+								timeZone="America/Sao_Paulo" />
+						</h:outputText>
+					</p:column>
+
+					<p:column headerText="Ações" style="text-align: center;">
+
+						<p:commandButton action="#{timeBean.editar(item.id)}"
+							icon="pi pi-pencil" title="Editar"
+							styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only edit-button rounded-button ui-button-success"
+							update="formulario" type="submit">
+						</p:commandButton>
+
+						<span style="margin-left: 5px;"></span>
+
+						<p:commandButton action="#{timeBean.deletar(item.id)}"
+							icon="pi pi-trash" title="Deletar"
+							styleClass="ui-button ui-widget ui-state-default ui-corner-all ui-button-icon-only ui-button-warning rounded-button"
+							update="formulario" type="submit">
+							<f:param name="id" value="#{item.id}" />
+						</p:commandButton>
+
+					</p:column>
+
+				</p:dataTable>
+
+				<div class="ui-g-12">
+					<div style="display: flex; justify-content: flex-end; gap: 10px;">
+						<p:commandButton value="Mostrar quantidade" icon="pi pi-search"
+							action="#{jogadaBean.quantidadeJogo}"
+							styleClass="ui-button-success" />
+					</div>
+				</div>
+
+			</h:form>
+		</p:card>
+	</div>
+</h:body>
+</html>

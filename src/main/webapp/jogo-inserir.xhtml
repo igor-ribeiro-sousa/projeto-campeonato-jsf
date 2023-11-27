@@ -1,0 +1,138 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+	xmlns:h="http://xmlns.jcp.org/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:f="http://xmlns.jcp.org/jsf/core">
+
+<h:head>
+	<title>Pardida - Inserir</title>
+	<style>
+html, body {
+	height: 100%;
+	margin: 0;
+}
+
+body {
+	background-image: linear-gradient(to left bottom, #181818, #19191d, #191a23, #171b28,
+		#141d2e);
+	margin: 0;
+	height: 100%;
+	text-align: center;
+}
+
+.mega-menu-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 25px;
+}
+
+.p-megamenu {
+	border: none;
+	width: 100%;
+}
+
+.p-menuitem {
+	padding: 10px;
+}
+
+.p-submenu {
+	background-color: #2980b9;
+	border-bottom: 1px solid #1f6193;
+}
+
+.card-container {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-top: 25px;
+}
+
+.card {
+	width: 80rem;
+}
+
+.actions-container {
+	display: flex;
+	justify-content: flex-end;
+	gap: 10px;
+}
+</style>
+</h:head>
+
+<h:body>
+	<div class="mega-menu-container">
+		<h:form>
+			<p:megaMenu orientation="horizontal" autoDisplay="false">
+				<p:menuitem value="Tabela" outcome="tabela-campeonato"
+					icon="pi pi-calendar" />
+
+				<p:submenu label="Times" icon="pi pi-fw pi-briefcase">
+					<p:column>
+						<p:submenu label="Ações">
+							<p:menuitem value="Inserir" outcome="time-inserir" />
+							<p:menuitem value="Pesquisar" outcome="time-pesquisar" />
+						</p:submenu>
+					</p:column>
+				</p:submenu>
+
+				<p:menuitem value="Partida" outcome="jogo-inserir"
+					icon="pi pi-calendar" />
+
+			</p:megaMenu>
+		</h:form>
+	</div>
+
+	<div class="card-container">
+		<p:card style="width: 80rem; margin-bottom: 2em;">
+
+			<f:facet name="title" style="margin-top: 50px;">Partida</f:facet>
+			<h:form id="formulario">
+
+				<p:messages id="messages" showDetail="true" closable="true">
+					<p:autoUpdate />
+				</p:messages>
+
+				<div class="ui-fluid formgrid grid">
+					<div class="field col-12 md:col-4">
+						<p:selectOneMenu id="time1" value="#{jogoBean.selectTime1}"
+							style="width: 40rem">
+							<f:selectItem itemLabel="Selecione o time 1" itemValue="" />
+							<f:selectItems value="#{timeBean.times}" var="time"
+								itemLabel="#{time.nome}" itemValue="#{time.id}" />
+						</p:selectOneMenu>
+					</div>
+				</div>
+
+				<br />
+
+				<div class="ui-fluid formgrid grid">
+					<div class="field col-12 md:col-4">
+						<p:selectOneMenu id="time2" value="#{jogoBean.selectTime2}"
+							style="width: 40rem">
+							<f:selectItem itemLabel="Selecione o time 2" itemValue="" />
+							<f:selectItems value="#{timeBean.times}" var="time"
+								itemLabel="#{time.nome}" itemValue="#{time.id}" />
+						</p:selectOneMenu>
+					</div>
+				</div>
+
+
+				<div class="ui-g-12">
+					<div style="display: flex; justify-content: flex-end; gap: 10px;">
+						<p:commandButton value="Salvar" 
+						                 icon="pi pi-check"
+										 action="#{jogoBean.salvar}" 
+										 update="formulario"
+										 styleClass="ui-button-success" />
+					</div>
+				</div>
+
+			</h:form>
+		</p:card>
+	</div>
+
+</h:body>
+</html>
