@@ -1,7 +1,6 @@
 package dao;
 
 import java.util.List;
-import java.util.Objects;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
@@ -33,37 +32,32 @@ public class JogoDAO {
 	}
 
 	public static List<Jogo> pesquisarPorNomeDoTime(String nomeDoTime) {
-		EntityManager entityManager = JPAUtilService.fabricarEntityManager();
+	    EntityManager entityManager = JPAUtilService.fabricarEntityManager();
 
-		try {
-			Integer codigoDoTime = obterCodigoPeloNome(nomeDoTime);
-			Query query;
-			if (Objects.nonNull(codigoDoTime)) {
-				query = entityManager.createQuery(
-						"SELECT j FROM Jogo j WHERE j.time1.id = :codigoDoTime OR j.time2.id = :codigoDoTime");
+	    try {
+	        Query query = entityManager.createQuery(
+	                "SELECT j FROM Jogo j WHERE "
+	                + "(j.nomeTime1 LIKE :nomeDoTime OR j.nomeTime2 LIKE :nomeDoTime)");
 
-				query.setParameter("codigoDoTime", codigoDoTime);
+	        query.setParameter("nomeDoTime", "%" + nomeDoTime + "%");
 
-				List<Jogo> resultado = query.getResultList();
-				return resultado;
-			}
-			return null;
-
-		} catch (Exception e) {
-			return null;
-
-		} finally {
-			if (entityManager != null) {
-				entityManager.close();
-			}
-		}
+	        List<Jogo> resultado = query.getResultList();
+	        return resultado;
+	    } catch (Exception e) {
+	        return null;
+	    } finally {
+	        if (entityManager != null && entityManager.isOpen()) {
+	            entityManager.close();
+	        }
+	    }
 	}
+
 
 	public static Integer obterCodigoPeloNome(String nomeDoTime) {
 		EntityManager entityManager = JPAUtilService.fabricarEntityManager();
 
 		try {
-			Query query = entityManager.createQuery("SELECT t.id FROM Time t WHERE t.nome LIKE :nomeDoTime");
+			Query query = entityManager.createQuery("SELECT t.id FROM Time t WHERE t.nome LIKE :nomeDoTime AND t.flagAtivo = 'S'");
 
 			query.setParameter("nomeDoTime", "%" + nomeDoTime + "%");
 
@@ -154,10 +148,10 @@ public class JogoDAO {
 
 		try {
 			transaction.begin();
-			Jogo jogada = entityManager.find(Jogo.class, id);
-			if (jogada != null) {
-				excluir(jogada, entityManager);
-			}
+			Jogo jogo = entityManager.find(Jogo.class, id);
+			if (jogo != null) {
+                excluir(jogo, entityManager);
+            }
 			transaction.commit();
 
 		} catch (Exception e) {

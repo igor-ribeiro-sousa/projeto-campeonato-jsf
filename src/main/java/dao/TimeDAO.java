@@ -1,9 +1,11 @@
 package dao;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.persistence.EntityManager;
 import javax.persistence.EntityTransaction;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import entidade.Time;
@@ -16,7 +18,7 @@ public class TimeDAO {
 		EntityManager entityManager = JPAUtilService.fabricarEntityManager();
 
 		try {
-			Query query = entityManager.createQuery("select t from Time t");
+			Query query = entityManager.createQuery("select t from Time t WHERE t.flagAtivo = 'S'");
 			List<Time> resutado = query.getResultList();
 			return resutado;
 
@@ -30,6 +32,50 @@ public class TimeDAO {
 		}
 	}
 
+	public static Time pesquisarPorNomeDoTime(String nomeDoTime) {
+		EntityManager entityManager = JPAUtilService.fabricarEntityManager();
+
+		try {
+			Integer codigoDoTime = obterCodigoPeloNome(nomeDoTime);
+			Query query;
+			if (Objects.nonNull(codigoDoTime)) {
+				return getTime(codigoDoTime);
+			}
+			return null;
+
+		} catch (Exception e) {
+			return null;
+
+		} finally {
+			if (entityManager != null) {
+				entityManager.close();
+			}
+		}
+	}
+
+	public static Integer obterCodigoPeloNome(String nomeDoTime) {
+		EntityManager entityManager = JPAUtilService.fabricarEntityManager();
+
+		try {
+			Query query = entityManager
+					.createQuery("SELECT t.id FROM Time t WHERE t.nome LIKE :nomeDoTime AND t.flagAtivo = 'S'");
+
+			query.setParameter("nomeDoTime", "%" + nomeDoTime + "%");
+
+			Integer codigoDoTime = (Integer) query.getSingleResult();
+			return codigoDoTime;
+			
+		} catch (NoResultException e) {
+			return null;
+		} catch (Exception e) {
+			return null;
+		} finally {
+			if (entityManager != null) {
+				entityManager.close();
+			}
+		}
+	}
+	
 	public static Time getTime(Integer id) {
 		EntityManager entityManager = JPAUtilService.fabricarEntityManager();
 
@@ -101,7 +147,7 @@ public class TimeDAO {
 	public static void excluir(Integer id) {
 		EntityManager entityManager = JPAUtilService.fabricarEntityManager();
 		EntityTransaction transaction = entityManager.getTransaction();
-		
+
 		try {
 			transaction.begin();
 			Time time = entityManager.find(Time.class, id);
@@ -109,7 +155,6 @@ public class TimeDAO {
                 excluir(time, entityManager);
             }
 			transaction.commit();
-
 		} catch (Exception e) {
 			if (transaction != null && transaction.isActive()) {
 				transaction.rollback();

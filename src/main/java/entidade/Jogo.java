@@ -6,8 +6,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -16,24 +14,30 @@ import javax.persistence.TemporalType;
 @Table(name = "TBL_JG")
 public class Jogo {
 
-    @Id
-    @Column(name = "CD_JG")
-    @GeneratedValue
-    private Integer id;
+	@Id
+	@Column(name = "CD_JG")
+	@GeneratedValue
+	private Integer id;
 
-    @Column(name = "CD_TM1")
-	private Integer codigoTime1;
+	@Column(name = "NM_TM1")
+	private String nomeTime1;
 
-	@ManyToOne
-	@JoinColumn(name = "CD_TM1", referencedColumnName = "CD_TM", insertable = false, updatable = false)
-	private Time time1;
+	@Column(name = "NM_TM2")
+	private String nomeTime2;
 
-	@Column(name = "CD_TM2")
-	private Integer codigoTime2;
+//    @Column(name = "CD_TM1")
+//	private Integer codigoTime1;
+//
+//	@ManyToOne
+//	@JoinColumn(name = "CD_TM1", referencedColumnName = "CD_TM", insertable = false, updatable = false)
+//	private Time time1;
 
-	@ManyToOne
-	@JoinColumn(name = "CD_TM2", referencedColumnName = "CD_TM", insertable = false, updatable = false)
-	private Time time2;
+//	@Column(name = "CD_TM2")
+//	private Integer codigoTime2;
+//
+//	@ManyToOne
+//	@JoinColumn(name = "CD_TM2", referencedColumnName = "CD_TM", insertable = false, updatable = false)
+//	private Time time2;
 
 	@Column(name = "GM_TM1")
 	private Integer golsMarcadosTime1;
@@ -56,36 +60,20 @@ public class Jogo {
 		this.id = id;
 	}
 
-	public Integer getCodigoTime1() {
-		return codigoTime1;
+	public String getNomeTime1() {
+		return nomeTime1;
 	}
 
-	public void setCodigoTime1(Integer codigoTime1) {
-		this.codigoTime1 = codigoTime1;
+	public void setNomeTime1(String nomeTime1) {
+		this.nomeTime1 = nomeTime1;
 	}
 
-	public Time getTime1() {
-		return time1;
+	public String getNomeTime2() {
+		return nomeTime2;
 	}
 
-	public void setTime1(Time time1) {
-		this.time1 = time1;
-	}
-
-	public Integer getCodigoTime2() {
-		return codigoTime2;
-	}
-
-	public void setCodigoTime2(Integer codigoTime2) {
-		this.codigoTime2 = codigoTime2;
-	}
-
-	public Time getTime2() {
-		return time2;
-	}
-
-	public void setTime2(Time time2) {
-		this.time2 = time2;
+	public void setNomeTime2(String nomeTime2) {
+		this.nomeTime2 = nomeTime2;
 	}
 
 	public Integer getGolsMarcadosTime1() {
@@ -104,6 +92,14 @@ public class Jogo {
 		this.golsMarcadosTime2 = golsMarcadosTime2;
 	}
 
+	public String getResultado() {
+		return resultado;
+	}
+
+	public void setResultado(String resultado) {
+		this.resultado = resultado;
+	}
+
 	public Date getData() {
 		return data;
 	}
@@ -112,11 +108,4 @@ public class Jogo {
 		this.data = data;
 	}
 
-	public String getResultado() {
-		return resultado;
-	}
-
-	public void setResultado(String resultado) {
-		this.resultado = resultado;
-	}
 }

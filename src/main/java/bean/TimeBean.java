@@ -3,11 +3,13 @@ package bean;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.context.FacesContext;
+import javax.faces.context.Flash;
 import javax.faces.view.ViewScoped;
 
 import dao.TimeDAO;
@@ -20,9 +22,39 @@ public class TimeBean {
 	private Time time = new Time();
 	private List<Time> times = new ArrayList<>();
 
+	public void init() {
+		FacesContext facesContext = FacesContext.getCurrentInstance();
+		Flash flash = facesContext.getExternalContext().getFlash();
+		time = (Time) flash.get("time");
+
+	}
+
+	public String alterar() {
+		try {
+			Integer id = obterIdParametro();
+			Time timeBanco = TimeDAO.getTime(id);
+			completarAlterar();
+			if (validarCampos()) {
+				TimeDAO.alterar(time);
+				mensagemTelaEditado();
+				
+			}
+			return "jogo-pesquisar?faces-redirect=true";
+			
+		} catch (Exception e) {
+			throw new JSFException("Erro ao tentar alterar!" + e.getMessage());
+		}
+	}
+	
+	private Integer obterIdParametro() {
+		Map<String, String> params = FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+		String idParam = params.get("id");
+		return Integer.parseInt(idParam);
+	}
+	
 	public String salvar() {
 		try {
-			if (validarInserir(time)) {
+			if (validarCampos()) {
 				completarInserir();
 				TimeDAO.salvar(time);
 				mensagemTela();
@@ -36,11 +68,25 @@ public class TimeBean {
 		return null;
 	}
 
+
+	private void mensagemTelaEditado() {
+		String mensagem = "Time editado com sucesso!";
+		FacesContext.getCurrentInstance().addMessage(null,
+				new FacesMessage(FacesMessage.SEVERITY_INFO, "Resultado:", mensagem));
+		time = new Time();
+	}
+
+	private void completarAlterar() {
+		if (this.time.getNome() != null) {
+			this.time.setNome(this.time.getNome().toUpperCase().trim());
+		}
+	}
+
 	private void mensagemTela() {
 		String mensagem = "Time inserido com sucesso!";
 		FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", mensagem));
 	}
-	
+
 	private void completarInserir() {
 		this.time.setNome(this.time.getNome().toUpperCase().trim());
 		this.time.setPontuacao(0);
@@ -54,15 +100,17 @@ public class TimeBean {
 		this.time.setFlagAtivo("S");
 	}
 
-	public void editar(Integer id) {
-//		try {
-//			FacesContext.getCurrentInstance().getExternalContext().redirect("jogo-alterar.xhtml");
-//			Jogada jogadaAtualiza = JogadaDAO.getJogador(id);
-//
-//		} catch (Exception e) {
-//			throw new JSFException(e.getMessage());
-//		}
+	public String editar(Integer id) {
+		try {
+			time = TimeDAO.getTime(id);
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			Flash flash = facesContext.getExternalContext().getFlash();
+			flash.put("time", time);
+			return "time-alterar?faces-redirect=true";
 
+		} catch (Exception e) {
+			throw new JSFException(e.getMessage());
+		}
 	}
 
 	public void ordenarPorPontuacao() {
@@ -82,7 +130,7 @@ public class TimeBean {
 
 	}
 
-	private boolean validarInserir(Time time) {
+	private boolean validarCampos() {
 		if (this.time.getNome() == null || this.time.getNome().isEmpty()) {
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_ERROR, "Error", "Nome do time é obrigatório!"));
@@ -90,7 +138,7 @@ public class TimeBean {
 		}
 		if (Objects.nonNull(this.getTimes())) {
 			for (Time item : this.times) {
-				if (item.getNome().equalsIgnoreCase(time.getNome())) {
+				if (item.getNome().equalsIgnoreCase(this.time.getNome())) {
 					FacesContext.getCurrentInstance().addMessage(null,
 							new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Nome do time já existe!"));
 					return false;

@@ -19,8 +19,8 @@ import exception.JSFException;
 @ManagedBean
 public class JogoBean {
 	private Jogo jogo = new Jogo();
-	private Integer selectTime1;
-	private Integer selectTime2;
+	private String selectTime1;
+	private String selectTime2;
 	private String nomeTimePesquisa;
 
 	private List<Jogo> jogos = new ArrayList<Jogo>();
@@ -54,6 +54,7 @@ public class JogoBean {
 			if (this.nomeTimePesquisa != null && !this.nomeTimePesquisa.equals("")) {
 			this.nomeTimePesquisa = this.nomeTimePesquisa.toUpperCase().trim();
 			    this.listaDeResultados = JogoDAO.pesquisarPorNomeDoTime(nomeTimePesquisa);
+			    
 			}
 
 		} catch (JSFException e) {
@@ -69,8 +70,8 @@ public class JogoBean {
 	}
 
 	private void setCodTimes() {
-		this.jogo.setCodigoTime1(this.selectTime1);
-		this.jogo.setCodigoTime2(this.selectTime2);
+		this.jogo.setNomeTime1(this.selectTime1);
+		this.jogo.setNomeTime2(this.selectTime2);
 		this.jogo.setData(new Date());
 	}
 
@@ -84,9 +85,9 @@ public class JogoBean {
 
 	public void determinarPontuacaoRodada() {
 		Time time1 = new Time();
-		time1 = TimeDAO.getTime(selectTime1);
+		time1 = TimeDAO.pesquisarPorNomeDoTime(selectTime1);
 		Time time2 = new Time();
-		time2 = TimeDAO.getTime(selectTime2);
+		time2 = TimeDAO.pesquisarPorNomeDoTime(selectTime2);
 
 		if (this.jogo.getGolsMarcadosTime1() == this.jogo.getGolsMarcadosTime2()) {
 			completarRodada(time1, time2);
@@ -186,7 +187,7 @@ public class JogoBean {
 	public void deletar(Integer id) {
 		try {
 			JogoDAO.excluir(id);
-			String mensagem = "Jogo excluída!";
+			String mensagem = "Jogo excluído!";
 			FacesContext.getCurrentInstance().addMessage(null,
 					new FacesMessage(FacesMessage.SEVERITY_INFO, "Resultado", mensagem));
 //			FacesContext.getCurrentInstance().getExternalContext().redirect("time-pesquisar.xhtml");
@@ -231,22 +232,22 @@ public class JogoBean {
 		this.jogos = jogos;
 	}
 
-	public Integer getSelectTime1() {
+	public String getSelectTime1() {
 		return selectTime1;
 	}
-
-	public void setSelectTime1(Integer selectTime1) {
+	
+	public void setSelectTime1(String selectTime1) {
 		this.selectTime1 = selectTime1;
 	}
-
-	public Integer getSelectTime2() {
+	
+	public String getSelectTime2() {
 		return selectTime2;
 	}
-
-	public void setSelectTime2(Integer selectTime2) {
+	
+	public void setSelectTime2(String selectTime2) {
 		this.selectTime2 = selectTime2;
 	}
-
+	
 	public String getNomeTimePesquisa() {
 		return nomeTimePesquisa;
 	}
@@ -262,4 +263,5 @@ public class JogoBean {
 	public void setListaDeResultados(List<Jogo> listaDeResultados) {
 		this.listaDeResultados = listaDeResultados;
 	}
+
 }
